@@ -2,6 +2,9 @@ import cv2
 import os
 import pickle
 import face_recognition
+import numpy as np
+import cvzone
+import fromSupabaseToLocal as sbLocal
 
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
@@ -40,9 +43,17 @@ while True:
         matches=face_recognition.compare_faces(encodeListKnown, encodeFace)
         matches=face_recognition.compare_faces(encodeListKnown, encodeFace) #lower distance, better match
         faceDistance=face_recognition.face_distance(encodeListKnown, encodeFace)
-        print("Matches: ", matches)
-        print("Face distance: ", faceDistance)
-    
+        # 
+        matchIdx= np.argmin(faceDistance)
+        
+        if(matches[matchIdx]):
+            # print("Face detected with ", studentIDs[matchIdx], " student ID")
+            y1, x2, y2, x1= faceLoc
+            y1, x2, y2, x1= y1*4, x2*4, y2*4, x1*4
+            bbox= 55+x1, 162+y1, x2-x1, y2-y1
+            imgBackground=cvzone.cornerRect(imgBackground,bbox, rt=0)
+            print(sbLocal.fetchStudentInfo(studentIDs[matchIdx])[0]["first_name"], " ", sbLocal.fetchStudentInfo(studentIDs[matchIdx])[0]["last_name"])
+            
     cv2.imshow("Face attendance", imgBackground) 
     cv2.waitKey(1)
     
