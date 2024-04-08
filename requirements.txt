@@ -1,0 +1,9 @@
+supabase
+cv2
+pickle
+face_recognition
+numpy
+cvzone
+PyQt5
+pytz
+psycopg2
